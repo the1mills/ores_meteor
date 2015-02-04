@@ -1,0 +1,1 @@
+ console.log('starting up...in both/setup.js');

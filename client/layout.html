@@ -1,4 +1,4 @@
-<template name="navbar-template">
+<template name="layout-template">
  <div class="navbar navbar-inverse navbar-fixed-top">
        <div class="navbar-inner">
          <div class="container">
@@ -7,7 +7,7 @@
              <span class="icon-bar"></span>
              <span class="icon-bar"></span>
            </button>
-           <a class="brand" href="#">Project name</a>
+           <a class="brand" href="#">ORESoftware</a>
            <div class="nav-collapse collapse">
              <ul class="nav">
                <li class="active"><a href="#">Home</a></li>
@@ -23,14 +23,10 @@
        <a href="#"><img src="images/oresoftware_logo.jpg"></a> 
        </p>
    </div>
-   
-     <div class="container">
-       <h1>Login to continue</h1>
-       <p>{{> loginButtons}}</p>
-       <p>
-         {{#if currentUser}}
-           You are now logged in.
-         {{/if}}
-       </p>
-    </div>
+  <stuff>
+    {{> yield "stuff"}}
+  </stuff>
+  <footer>
+    {{> yield "footer"}}
+  </footer>
 </template>
