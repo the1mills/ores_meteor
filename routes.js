@@ -19,7 +19,7 @@ Router.route('/item', function () {
 }, {where: 'server'});
 
 Router.route('/', function () {
-   this.render('project-list-template',{to: 'footer'});
+   this.render('project-list-template',{to: 'more'});
  this.render('login-template', {to: 'stuff'});
 }, {where:'client'});
 
@@ -31,14 +31,26 @@ Router.route('/stinky', function(){
    this.redirect('/smelly');
 }, {where:'client'});
 
-Router.route('/#about', function(){
-   this.redirect('/smelly');
+// Router.route('/#about', function(){
+//   this.render('about',{to:'stuff'});
+// }, {where:'client'});
+
+// Router.route('/#contact', function(){
+//   this.render('contact',{to:'stuff'});
+// }, {where:'client'});
+
+Router.route('/about', function(){
+  this.render('about_template',{to:'stuff'});
+  this.render('personnel_template',{to:'stuff'});
 }, {where:'client'});
 
+Router.route('/contact', function(){
+  this.render('contact-template',{to:'more'});
+}, {where:'client'});
 
 Router.route('/smelly', function () {
    this.render('smelly', {to: 'stuff'});
-    this.render('project-list-template',{to: 'footer'});
+    this.render('project-list-template',{to: 'more'});
    
 //   this.render('smelly', {
 //     data: {smoke:'smokey'}

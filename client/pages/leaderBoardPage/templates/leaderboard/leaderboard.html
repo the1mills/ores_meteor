@@ -5,7 +5,9 @@
 <title>Leaderboard</title>
 </head>
 <body>
-  {{> add_player_Form_template}}
+  {{#if currentUser}}
+  {{> add_player_form_template}}
+  {{/if}}
 <h1>Leaderboard</h1>
   {{> leaderboard_template}}
 </body>

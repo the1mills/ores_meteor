@@ -1,6 +1,43 @@
+html {
+  position: relative;
+  min-height: 100%;
+}
+
 body {
-  padding-top: 60px;
+  padding-top: 15px;
+  background-color: #D8D8D8;
+   margin-bottom: 60px;
 }
 .selected{
-background-color: yellow;
+background-color: #008080;
+}
+
+.layout-header{
+background-color: #008080;
+}
+
+#iron-router-progress {
+    background-color : #008080;
+    box-shadow       : 0 0 15px #008080;
+}
+
+.col-centered{
+    float: none;
+    margin: 0 auto;
+}
+
+.center-block {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  /* Set the fixed height of the footer here */
+  height: 60px;
+  background-color: #f5f5f5;
 }
