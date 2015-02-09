@@ -1,4 +1,19 @@
-<template name="leaderboard_template">
+<template name="leaderboardTemplate">
+  <div class="container">
+<head>
+<title>Leaderboard</title>
+</head>
+<body>
+  {{#if currentUser}}
+  {{> addPlayerFormTemplate}}
+  {{/if}}
+<h1>Leaderboard</h1>
+  {{> playersTemplate}}
+</body>
+  </div>
+</template>
+
+<template name="playersTemplate">
   <input type="button" class="increment" value="Give 5 Points">
   <input type="button" class="decrement" value="Take 5 Points">
    <input type="button" class="remove" value="Remove Player">
@@ -13,7 +28,7 @@
 {{otherHelperFunction}}
 </template>
 
-<template name="add_player_form_template">
+<template name="addPlayerFormTemplate">
 <form>
 <input type="text" name="playerName">
 <input type="submit" value="Add Player">

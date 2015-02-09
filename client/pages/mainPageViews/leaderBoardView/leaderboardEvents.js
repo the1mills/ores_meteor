@@ -1,4 +1,4 @@
-Template.leaderboard_main_template.events({
+Template.leaderboardTemplate.events({
 'mouseover, .player': function(){
   var playerId = this._id;
 // Session.set('selectedPlayer', playerId);
@@ -31,7 +31,7 @@ console.log('selected player to remove:',selectedPlayer);
 });
 
 
-Template.add_player_form_template.events({
+Template.addPlayerFormTemplate.events({
 'submit form': function(event){
 event.preventDefault();
 console.log("Form submitted");

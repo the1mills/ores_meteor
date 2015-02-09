@@ -1,4 +1,4 @@
-Template.leaderboard_template.helpers({
+Template.leaderboardTemplate.helpers({
 player: function(){
   console.log('players list found');
   console.log('players:',PlayersList.find());

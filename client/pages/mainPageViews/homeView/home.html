@@ -1,4 +1,11 @@
-<template name="login-template">  
+<template name="homeTemplate"> 
+  <div class="container">
+        <p>{{> loginTemplate}}</p>
+        <p>{{> projectListTemplate}}</p>
+    </div>
+</template>
+
+<template name="loginTemplate">  
 <div class="container">
        <h1>Login to see more info</h1>
        <p>{{> loginButtons}}</p>
@@ -10,7 +17,7 @@
     </div>
 </template> 
 
-<template name="project-list-template">  
+<template name="projectListTemplate">  
 <div class="container">
   <h2>ORESoftware specializes in creating networked business applications for collaborative industries with the latest and greatest web and mobile technologies.</h2>
   <p></p>
@@ -21,6 +28,7 @@
   <li> <a href="http://SportExchange.io">SportExchange.io</a></li>
   <li><a href="http://globalRFP.com">globalRFP.com</a></li>
   <li><a href="http://apartments.com">apartments</a></li>
+  <li><a href="http://apartments.com">voting systems</a></li>
 </ul> 
     </div>
 </template>

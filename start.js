@@ -14,6 +14,7 @@
 //google spiderable 
 //https://apps.twitter.com with the1mills login
 //http://webix.com
+//https://github.com/meteor/meteor/wiki/Mobile-Dev-Install:-Android-on-Linux#libs32
  
  if (Meteor.isServer) {
 Meteor.startup(function () {
@@ -26,4 +27,4 @@ Meteor.startup(function () {
 
 
 
-//////
+///////////////
