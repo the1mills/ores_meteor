@@ -1,0 +1,81 @@
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+#nav_div.affix {
+    top: 0;
+    width: 100%
+}
+
+.navbar-default {
+    background-color: #F8F8F8;
+    border-color: #E7E7E7;
+}
+
+.personnel-thumbnail {
+    background-color: #696969;
+    border-color: #E7E7E7;
+}
+
+@media screen and (min-width: 768px) {
+    .modal-dialog {
+        left: 50%;
+        right: auto;
+        width: 624px;
+    }
+}
+
+.modal-dialog{
+position: absolute;
+left: 50%;
+margin-left: -312px;
+height: 500px;
+top: 50%;
+margin-top: -250px;
+} 
+
+.page-header {
+  
+  height: 100px;
+}
+
+body {
+  padding-top: 0px;
+  background-color: #D8D8D8;
+  background-image: url('images/green-yellow-linear-gradient-wallpapers.jpg');
+   margin-bottom: 60px;
+}
+.selected{
+background-color: #008080;
+}
+
+.layout-header{
+background-color: #008080;
+}
+
+#iron-router-progress {
+    background-color : #008080;
+    box-shadow       : 0 0 15px #008080;
+}
+
+.col-centered{
+    float: none;
+    margin: 0 auto;
+}
+
+.center-block {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+
+.footer {
+  position: absolute;
+  background-color: #50C878;
+  bottom: 0;
+  width: 100%;
+  /* Set the fixed height of the footer here */
+  height: 50px;
+}

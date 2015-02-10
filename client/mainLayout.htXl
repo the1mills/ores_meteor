@@ -1,0 +1,42 @@
+<template name="mainLayoutTemplate">
+ <div class="navbar navbar-default navbar-fixed-top">
+       <div class="navbar-inner">
+         <div class="container-fluid">
+           <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+             <span class="icon-bar"></span>
+             <span class="icon-bar"></span>
+             <span class="icon-bar"></span>
+           </button>
+           <div class="collapse nav-collapse">
+             <ul class="nav navbar-nav navbar-right">
+               <li class="navbar-option {{setHomeAsActive}}" id="home-option"><a href="/">Home</a></li>
+               <li class="navbar-option {{setAboutAsActive}}" id="about-option"><a href="/about">About</a></li>
+               <li class="navbar-option {{setContactAsActive}}" id="contact-option"><a href="/contact">Contact</a></li>
+               <li class="navbar-option {{setApiAsActive}}" id="api-option"><a href="/api">API</a></li>
+               <li class="navbar-option {{setMiscAsActive}}" id="misc-option"><a href="{{pathFor 'miscTemplate'}}">Misc</a></li>
+               <li class="navbar-option {{setElementAsActive}}" id="fun-stuff-option"><button type="button" id="fun-stuff-button" class="btn btn-default btn-lg">
+  <span class="glyphicon glyphicon-star" aria-hidden="true"></span> Fun Stuff
+</button></li>
+             </ul>
+           </div><!--/.nav-collapse -->
+         </div>
+       </div>
+     </div>
+   <div class="page-header layout-header">
+    <div class="row">
+    <div class="col-lg-1 col-centered center-block">
+     <img alt="Brand" src="images/oresoftware_logo.jpg">
+    </div>
+</div>
+</div>
+  <xxx>
+    {{> yield}}
+  </xxx>
+  <footer>
+     <footer class="footer">
+      <div class="container">
+         {{> footerTemplate}}
+      </div>
+    </footer>
+  </footer>
+</template>

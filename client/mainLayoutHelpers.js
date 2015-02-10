@@ -1,7 +1,34 @@
 //http://stackoverflow.com/questions/20780843/get-dom-element-using-meteor-template-helpers
 //http://stackoverflow.com/questions/13060608/can-meteor-templates-access-session-variables-directly
+//https://gentlenode.com/journal/meteor-20-verify-an-email-with-meteor-accounts/42
+
+
+Meteor.startup(function() {
+  $('#nav_div').affix({
+    offset: { 
+      top: function(){
+        return $('#nav_id').height() ;
+      }
+    }
+});
+});
+
+
+
 
 Template.mainLayoutTemplate.created = function() {
+  
+   if (Accounts._verifyEmailToken) {
+    Accounts.verifyEmail(Accounts._verifyEmailToken, function(err) {
+      if (err !== null) {
+        if (err.message = 'Verify email link expired [403]') {
+          console.log('Sorry this verification link has expired.')
+        }
+      } else {
+        console.log('Thank you! Your email address has been confirmed.')
+      }
+    });
+  }
   this.state = new ReactiveVar();
 //   this.autorun(_.bind(function() {
 //     var meetingDates = Meetings.findOne(meetingID).dates[this.data.dateString];
@@ -58,7 +85,6 @@ Template.mainLayoutTemplate.helpers({
    },
    setContactAsActive: function(){ 
       console.log('session.get(active_menu_option)',Session.get('active_menu_option'));
-      console.log('contact is active:',this.active_menu_option.contact);
      return this.active_menu_option.contact;
    },
    setApiAsActive: function(){ 
