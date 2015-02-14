@@ -23,3 +23,6 @@ twbs:bootstrap
 matb33:collection-hooks
 email
 appcache
+dburles:collection-helpers
+aldeed:collection2
+the1mills:meteormodelx

@@ -19,6 +19,10 @@
 //https://gentlenode.com/journal/meteor-20-verify-an-email-with-meteor-accounts/42
 //https://www.discovermeteor.com/blog/meteor-methods-client-side-operations/
 //https://github.com/awatson1978/meteor-cookbook/blob/master/cookbook/webstorm.md
+//reactJS
+//less
+
+//meteor --settings settings.json
  
  if (Meteor.isServer) {
    console.log('process.env.MONGO_URL',process.env.MONGO_URL);
@@ -85,6 +89,14 @@ function setUpEmailConfigurations(){
 }
     
 
+/*
+
+questions:
+
+PlayersList.allow on the client
+Leaderboard insert is not working
 
 
-//////////////////////
+*/
+
+////////////////////////
