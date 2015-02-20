@@ -1,8 +1,32 @@
-PlayerModelFactory = MeteorModelPrototype.expand({
+
+function getWeatherInBoston(){
+    return 'cold';
+}
+
+
+PlayerModel = MeteorModel.expand({
+
+
+    defaultData:{
+        //this data is the same for all instances of PlayerModels
+        name: getWeatherInBoston(true)
+    },
+
+    defaultSchemaOverride: {
+        //this data
+        dateCreated: {
+            ignore:true
+        },
+        dateUpdated: {
+            ignore:true
+        }
+
+    },
+
 
     schemaAllowExtraneousFields: false,
     schema:{
-     
+
         name:{
             type:String,
             lengthMin: 1,
@@ -22,15 +46,17 @@ PlayerModelFactory = MeteorModelPrototype.expand({
     },
 
     collectionInfo:{
-        meteorMongoCollection:'',  //which collection to add to
-        meteorMethodName: 'insertPlayerData'
+//         collectionName: new Meteor.collection('names'),
+//         collectionName: COLLECTION_NAMES.PlayerCollection.value(COLLECTION_NAMES.PlayerCollection.name),
+        collectionName: COLLECTION_NAMES.PlayerCollection.value,
+//        meteorMethodName: 'insertPlayerCollectionData'
     },
 
     init: function(prototype){
         //add hooks here for when object is created
 
-        var x = undefined;
-        console.log('initted' + x.fart());
+        //var x = undefined;
+        //console.log('initted' + x.fart());
     },
 
     beforeSave: function(){

@@ -22,10 +22,19 @@
 <template name="projectListTemplate">  
   <h1>Projects</h1>
   <h2>Collaborative Industries:</h2>
+ 
       <ul class="list-group">
         {{#each projectList}}
          <li class="list-group-item">
             <span class="badge">14</span>
+            <strong>{{name}}</strong>
+         </li>
+        {{/each}}
+      </ul>
+  <ul class="player-group">
+        {{#each listPlayers}}
+         <li class="player-group-item">
+            <span class="badge">15</span>
             <strong>{{name}}</strong>
          </li>
         {{/each}}

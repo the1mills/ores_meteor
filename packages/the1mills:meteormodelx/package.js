@@ -10,11 +10,14 @@ Package.describe({
   documentation: 'README.md'
 });
 
+// Npm.depends({'the1mills:meteormodelx':'0.0.1'});
+Npm.depends({'colors':'1.0.1'});
+
 Package.onUse(function(api) {
 //   api.versionsFrom('1.0.3.1');
 //  api.use(['meteormodelx'],['client', 'server']);
-  api.addFiles(['the1mills:meteormodelx.js'],['client', 'server']);
-  api.export(['MeteorModelPrototype'],['client', 'server']);
+  api.addFiles(['the1mills:meteormodelx.js'],['client','server']);
+  api.export(['MeteorModel'],['client', 'server']);
 });
 
 Package.onTest(function(api) {

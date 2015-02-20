@@ -30,3 +30,5 @@ the1mills:meteormodelx
 
 npm-container
 meteorhacks:npm
+meteortypescript:compiler
+audit-argument-checks

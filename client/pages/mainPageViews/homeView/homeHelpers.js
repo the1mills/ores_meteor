@@ -8,5 +8,12 @@ projectList: function(){
     return ['no twitter bootstrap'];
   }
   return projectListArray;
-}
+},
+  listPlayers: function(){
+  
+//     COLLECTION_NAMES.PlayerCollection.value.forEach(function(error,item){
+//       console.log('items and shit:',error,item);
+//     });
+    return COLLECTION_NAMES.PlayerCollection.value.find();
+}  
 });
