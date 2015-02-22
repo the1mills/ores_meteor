@@ -1,0 +1,39 @@
+<template name="funStuffTemplate">
+ 
+  {{>choicesTemplate}}
+  {{>romanNumeralTemplate}}
+</template>
+
+<template name="romanNumeralTemplate">
+  <div class="container">
+     Fun Stuff
+  Roman numeral parser
+  </div>
+</template>
+
+
+<template name='articlesTemplate'>
+  <h2>Articles</h2>
+    <ul>
+       {{#each this}} 
+        <li>
+          <a href="{{ pathFor 'article' }}"> {{title}} </a>
+        </li>
+      {{/each}}
+    </ul>
+</template>
+
+<template name='fullArticleTemplate'>
+  <h2>{{ title }}</h2>
+  <p>{{ body }}</p>
+</template>
+
+<template name="choicesTemplate">
+  <div class="container">
+  <div class="btn-group" role="group" aria-label="">
+  <button type="button" class="btn btn-default">Roman Numerals Parsing</button>
+  <button type="button" class="btn btn-default">Math Parsing</button>
+  <button type="button" class="btn btn-default">Some other weird shit</button>
+</div>
+  </div>
+</template>

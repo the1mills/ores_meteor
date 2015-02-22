@@ -1,0 +1,38 @@
+<template name="leaderboardTemplate">
+  <div class="container">
+<head>
+<title>Leaderboard</title>
+</head>
+<body>
+  {{#if currentUser}}
+  {{> addPlayerFormTemplate}}
+  {{/if}}
+<h1>Leaderboard</h1>
+  {{> playersTemplate}}
+</body>
+  </div>
+</template>
+
+<template name="playersTemplate">
+  <input type="button" class="increment" value="Give 5 Points">
+  <input type="button" class="decrement" value="Take 5 Points">
+   <input type="button" class="remove" value="Remove Player">
+<ul>
+   <li>Players:</li>
+{{#each players}}
+ 
+<li class="player {{selectedClass}}">{{name}}: {{score}}</li>
+{{/each}}
+</ul>
+{{#if showSelectedPlayer}}
+<li>Selected Player: {{showSelectedPlayer.name}}</li>
+{{/if}}
+{{otherHelperFunction}}
+</template>
+
+<template name="addPlayerFormTemplate">
+<form>
+<input type="text" name="playerName">
+<input type="submit" value="Add Player">
+</form>
+</template>

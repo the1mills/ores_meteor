@@ -1,0 +1,73 @@
+<template name="mainLayoutTemplate">
+  <div id="nav_div" data-spy="affix" data-offset-top="400">
+      <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="container-fluid">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+<!--             <a class="navbar-brand" href="#"><img alt="Brand" src="images/oresoftware_logo.jpg"></a> -->
+            
+          </div>
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+               <li> <a href="#">{{> loginButtons}}</a></li>
+            </ul>
+            
+            <ul class="nav navbar-nav navbar-right">
+     
+             <li class="navbar-option {{setHomeAsActive}}" id="home-option"><a href="/">Home</a></li>
+               <li class="navbar-option {{setAboutAsActive}}" id="about-option"><a href="/about">About</a></li>
+               <li class="navbar-option {{setContactAsActive}}" id="contact-option"><a href="/contact">Contact</a></li>
+               <li class="navbar-option {{setApiAsActive}}" id="api-option"><a href="/api">API</a></li>
+              <li class="navbar-option {{setOpenSourceAsActive}}" id="open-source-option"><a href="/openSource">Open Source</a></li>
+               <li class="navbar-option {{setMiscAsActive}}" id="misc-option"><a href="{{pathFor 'miscTemplate'}}">Misc</a></li>
+<!--                <li class="navbar-option {{setElementAsActive}}" id="fun-stuff-option"><button type="button" id="fun-stuff-button" class="btn btn-default btn-lg">
+  <span class="glyphicon glyphicon-star" aria-hidden="true"></span> Fun Stuff
+</button></li> -->
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div><!--/.container-fluid -->
+      </nav>
+  </div>
+
+   <div class="layout-header">
+    <div class="row text-center">
+     
+     <div id="oresoftware-pic-div">
+                <img src="images/os1.gif">
+            </div>
+      
+     </div>
+  </div>
+   
+  <jumbotron>
+       {{>yield region='jumbotron'}}
+  </jumbotron>
+  
+    <mainContentGoesHere>
+    {{> yield}}
+    </mainContentGoesHere>
+
+     <footer class="footer">
+         {{> footerTemplate}}
+    </footer>
+</template>
+
+<template name="jumbotronTemplate">
+  <div class="container">
+   <div class="jumbotron">
+        {{>taglineTemplate}}
+      </div>
+  </div>
+</template>
+
+<template name="taglineTemplate">
+<div class="container">
+     <h2>ORESoftware specializes in creating networked business applications for collaborative industries with the latest and greatest web and mobile technologies.</h2>
+  </div>
+  
+</template>
