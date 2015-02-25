@@ -1,9 +1,10 @@
 <template name="homeTemplate"> 
   <div id="open-modal" class="container">
        {{> projectListTemplate}}
+       {{> playerListTemplate}}
     </div>
        {{> modalTemplate}}
-       {{>collapsibleGroupTemplate}}
+       {{> collapsibleGroupTemplate}}
   
 </template>
 
@@ -31,6 +32,10 @@
          </li>
         {{/each}}
       </ul>
+</template>
+  
+<template name="playerListTemplate">  
+  <h1>Players</h1>
   <ul class="player-group">
         {{#each listPlayers}}
          <li class="player-group-item">

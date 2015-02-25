@@ -1,7 +1,7 @@
 //var objectAssign = require('object-assign');
 //var colors = require('colors');
 //https://github.com/meteor/meteor/blob/devel/packages/mongo/mongo_driver.js#L67-L111
-
+//https://github.com/meteorhacks/npm
 //package.json vs packages.json
 //console.log(Meteor);
 //var colors = Meteor.npmRequire('colors');
@@ -13,7 +13,7 @@
  subo stands for 'subobject'
  .expand is the object inheritance analog of .extend (for class inheritance)
 
- prop and attr are interchangeable, standing for property and attribute respectively
+ prop and attr are interchangeable in meaning, standing for property and attribute respectively
 
  */
 
@@ -36,6 +36,8 @@
  Regular expression : This datatype is used to store regular expression
 
  */
+
+
 
 //http://en.wikipedia.org/wiki/Decorator_pattern
 
@@ -304,7 +306,7 @@ MeteorModel = {
         //return Object.freeze(subo);
         return subo;
     },
-    save: function(collectionInfo){
+    save: function(collectionInfo,validationBoolean){
         //might be able to do an update or save intelligently
         //should we check the schema with the data in save? I think not
       check(collectionInfo, Object);
@@ -350,29 +352,26 @@ MeteorModel = {
 
         if(this.collectionInfo.meteorMethodName !== undefined){
             console.log('saving with meteor method');
-            if(Meteor.isServer){
+          
               
-            result = Meteor.call(this.collectionInfo.meteorMethodName, this);
-              
-            }else if(Meteor.isClient){
-              
-              
-          Meteor.call(this.collectionInfo.meteorMethodName, this, function (error, result) {
+         result = Meteor.wrapAsync(Meteor.call(this.collectionInfo.meteorMethodName,this, function (error, result) {
            if (error) {
                 // handle error
               } else {
                 // examine result
               }
-            });
+           
+           
+           
+            }));
               
-              return;
+    
            }
-        }
       
       
       else{
            console.log('saving with meteor model function');
-            result = saveMeteorModelObject(this);
+            result = Meteor.wrapAsync(saveMeteorModelObject(this));
         }
 
 
@@ -400,6 +399,7 @@ MeteorModel = {
         }
 
         var obj = this.create(data,collectionInfo,schema);
+        //if obj is not valid return something else and don't call save
         return obj.save();
 
     }

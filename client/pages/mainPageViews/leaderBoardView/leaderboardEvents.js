@@ -1,4 +1,4 @@
-Template.leaderboardTemplate.events({
+Template.playersTemplate.events({
 'mouseover, .player': function(){
   var playerId = this._id;
 // Session.set('selectedPlayer', playerId);
@@ -24,7 +24,11 @@ PlayersList.update(selectedPlayer, {$inc: {score: -5} });
 var selectedPlayer = Session.get('selectedPlayer');
 console.log('selected player to remove:',selectedPlayer);
 // PlayersList.remove(selectedPlayer);
-    Meteor.call('removePlayerData', selectedPlayer);
+    Meteor.call('removePlayerData', selectedPlayer,function(err,data){
+    if (err){
+    console.log(err);
+    }
+  });
 }
   
 
@@ -37,6 +41,11 @@ event.preventDefault();
 console.log("Form submitted");
 console.log('event type',event.type);
 var playerNameVar = event.target.playerName.value;
-Meteor.call('insertPlayerData', playerNameVar);
+// Meteor.call('insertPlayerData', playerNameVar);
+  Meteor.call('insertPlayerData', playerNameVar, function(err,data){
+    if (err){
+    console.log(err);
+    }
+  });
 }
 });

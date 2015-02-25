@@ -24,11 +24,8 @@ matb33:collection-hooks
 email
 appcache
 dburles:collection-helpers
-aldeed:collection2
 the1mills:meteormodelx
-
-
-npm-container
 meteorhacks:npm
-meteortypescript:compiler
 audit-argument-checks
+npm-container
+cfs:ejson-file

@@ -38,7 +38,7 @@ margin-top: -250px;
 body {
   padding-top: 0px;
   background-color: #D8D8D8;
-  background-image: url('images/green-yellow-linear-gradient-wallpapers.jpg');
+  /*background-image: url('images/green-yellow-linear-gradient-wallpapers.jpg');*/
   margin-bottom: 60px;
 }
 .selected{

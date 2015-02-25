@@ -1,4 +1,4 @@
-
+//http://www.htmlxprs.com/post/40/creating-a-social-news-sharing-app-in-20-minutes-with-meteor
   //http://www.meteorpedia.com/read/REST_API
   //iron-location vs. iron-router
   //never imperatively modify the DOM, "reactive" 
@@ -24,13 +24,13 @@
 //https://github.com/meteor/meteor/wiki/Mobile-Dev-Install:-Android-on-Linux#jdk
 //http://abstractcoder.com/2014/08/22/how-to-get-started-building-mobile-apps-with-meteor-js.html
 //https://software.intel.com/en-us/android/articles/speeding-up-the-android-emulator-on-intel-architecture
-
+//https://meteorhacks.com/fibers-eventloop-and-meteor.html
 //meteor --settings settings.json
  
  if (Meteor.isServer) {
  
     Meteor.startup(function () {
-    
+    var GithubAPI = Meteor.npmRequire('github');
     setUpEmailConfigurations();
   // process.env.MONGO_URL = mongodb://127.0.0.1:3001/meteor 
 //   process.env.MONGO_URL = 'smtp://postmaster%40meteorize.mailgun.org:YOURPASSWORD@smtp.mailgun.org:587';
@@ -45,10 +45,15 @@
 
 questions:
 
+why is process not defined in lib/setup.js
 PlayersList.allow on the client
 Leaderboard insert is not working
-
-
+Can't do Meteor.npmRequire in package, only in Meteor app itself
+If you call Meteor.npmRequire in the app, how does it do that at runtime??
+Error: EACCES, unlink '/home/nitrous/code/ores_meteor/.meteor/local/build-garbage-1gnwswo/README'     upon meteor reset
+should I put subscribe calls only under client directory or in lib too?
+why does openSource go in a loop?
+#! or !# in the end of urls what is that?
 */
 
 /////////////////////////
