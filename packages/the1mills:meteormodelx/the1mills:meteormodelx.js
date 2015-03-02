@@ -7,6 +7,25 @@
 //var colors = Meteor.npmRequire('colors');
 //var colors = Npm.require('colors');
 
+
+/*
+
+ if(this.collectionInfo.collection){
+         this.collectionInfo.collection.insert(this.data);
+        }else if(this.collectionInfo.collectionName){
+        COLLECTION_NAMES.PlayerCollection.value.insert(this.data);
+          }else{
+          throw errors.noCollectionAttachedToMeteorModelObject();
+           }
+        
+        
+          if(callback){
+             callback(result);
+        }
+        return result;
+*/     
+        
+
 /*
  debugging hints:
 
@@ -55,6 +74,15 @@
 //http://en.wikipedia.org/wiki/Decorator_pattern
 
 var warnings = {
+  
+  mustPassCallBackToSaveFromClientWithMeteorMethod: function(){
+     var warning = 'MeteorModel warning: You must pass a callback to save() function when calling a Meteor.method from client.';
+     console.log(warning);
+  },
+  recommendToPassACallbackToSaveMethod: function(){
+      var warning = 'MeteorModel warning: Recommend that you pass a callback to save() function.';
+     console.log(warning);
+  },
     genericWarning: function(msg){
         var warning = 'MeteorModel warning: ' + msg;
 //        console.log(warning.yellow);
@@ -66,6 +94,10 @@ var warnings = {
 };
 
 var errors = {
+  notServerOrClient: function(){
+    console.trace();
+    return 'MeteorModel error: appears neither in server or client.';
+  },
 
     missingMandatoryUponCreateField: function(prop){
         console.trace();
@@ -143,7 +175,7 @@ var errors = {
 MeteorModel = {
 
     isMeteorModel: true,
-
+    defaultUpsert: false,
     mmSchema: {
 
         dateCreated: {
@@ -156,6 +188,25 @@ MeteorModel = {
 
         }
 
+    },
+    beforeSave: function(){
+        //add hooks here for right before saving
+    },
+    afterSave: function(){
+
+    },
+    defaultClientSideCallback: function(err,result){
+    
+    },
+    defaultServerSideCallback: function(err,result){
+    
+    },
+    validateClientSide: function(){
+        return true;
+    },
+    validateServerSide: function(){
+        //this function will be passed to the server, this should only be used to compare with data that only sits on server
+        return true;
     },
 
     mmData: {
@@ -217,7 +268,7 @@ MeteorModel = {
     },
     create: function(data, collectionInfo, schema){
       
-       console.log('create caller:', this.create.caller);
+       //console.log('create caller:', this.create.caller);
 
         //var subo = this;
 
@@ -306,20 +357,33 @@ MeteorModel = {
         //return Object.freeze(subo);
         return subo;
     },
-    save: function(collectionInfo,validationBoolean){
+//     save: function(collectionInfo,validationBoolean,callback){
+  
+  save: function(validationBoolean,callback){
+    
         //might be able to do an update or save intelligently
         //should we check the schema with the data in save? I think not
-      check(collectionInfo, Object);
+       // obj.save() should save to meteor client collections
+       //wrapAsync doesn't do anything on the client
       
-      console.log('save caller:', this.save.caller);
+      //console.log('save caller:', this.save.caller);
+      
+//         if(!callback){
+//           warnings.recommendToPassACallbackToSaveMethod();
+//         }
 
         if(this.data === undefined){
             throw errors.createDataBeforeSaving();
         }
 
-        if(collectionInfo !== undefined){
-            this.collectionInfo = collectionInfo;
-        }
+//         if(collectionInfo !== undefined){
+//             this.collectionInfo = collectionInfo;
+//         }else{
+//           callback = validationBoolean;
+//           validationBoolean = collectionInfo;
+//         }
+      
+      check(this.collectionInfo, Object);
 
         console.log('saving meteor model (perhaps an expansion of, and isMeteorModel is:',this.isMeteorModel);
         if(this.schema === undefined && this.isMeteorModel === undefined){
@@ -327,59 +391,67 @@ MeteorModel = {
 
         }
 
-        if(this.collectionInfo === undefined || (this.collectionInfo.collectionName === undefined && this.collectionInfo.collection === undefined)){
+        if(this.collectionInfo === undefined || this.collectionInfo.collections[0] === undefined){
             throw errors.beforeSavingModelYouMustDefineACollectionToSaveTo();
         }
-
-        for(var prop in this.schema){
-
-            if(!this.data.hasOwnProperty(prop)){
-                if(this.schema[prop].isMandatoryUponSave){
-                    throw errors.missingMandatoryUponSaveField(prop);
-                }
-            }
-            else{
-
-                if(!returnBooleanIfParameterTypesMatch(this.data[prop],this.schema[prop].type)){
-                    throw errors.wrongDataType(returnTheType(this.schema[prop].type),typeof(data[prop]));
-                }
-            }
-        }
+      
+      if(validationBoolean){
+        validateMeteorModelSchema(this);
+      }
 
         console.log('saving meteor model...',this.data);
 
         var result = null;
 
-        if(this.collectionInfo.meteorMethodName !== undefined){
+        if(this.meteorMethods.save !== undefined){
             console.log('saving with meteor method');
           
-              
-         result = Meteor.wrapAsync(Meteor.call(this.collectionInfo.meteorMethodName,this, function (error, result) {
-           if (error) {
-                // handle error
-              } else {
-                // examine result
-              }
-           
-           
-           
-            }));
-              
-    
-           }
-      
-      
-      else{
-           console.log('saving with meteor model function');
-            result = Meteor.wrapAsync(saveMeteorModelObject(this));
-        }
-
-
-            return {
-                result:result,
-                MeteorModelObject:this
+     
+             Meteor.call(this.meteorMethods.save,this,function(err,data){
+               console.log('in callback of meteor save call method');
+               if(callback){
+                 callback(err,data);
+               }
+               else{
+                 if(Meteor.isClient){
+                  this.defaultClientSideCallback(err,data);
+                 }
+                 else if(Meteor.isServer){
+                   this.defaultServerSideCallback(err,data);
+                 }
+                 else{
+                   throw 'neither server nor client problem';
+                 }
+               }
+            
+                 });
+            return;
+            
+          }else{
+           console.log('saving WITHOUT meteor method');
+//             result = Meteor.wrapAsync(saveMeteorModelObject(this));
+        
+          this.collectionInfo.collections[0].save(this.data,{upsert:this.defaultUpsert},function(err,data){
+            
+            if(callback){
+               callback(err,data);
             }
-
+            else{
+            if(Meteor.isServer){
+              this.defaultServerSideCallback(err,data);
+            }
+            else if(Meteor.isClient){
+               this.defaultClientSideCallback(err,data);
+            }
+            else{
+              throw 'neither server nor client problem';
+            }
+            }
+            
+          });
+          return;
+        
+        }
     },
 
     update:function(){
@@ -391,7 +463,7 @@ MeteorModel = {
         if(data === undefined){
             throw errors.createDataBeforeSaving();
         }
-        if(collectionInfo === undefined){
+        if(collectionInfo.collections[0] === undefined){
             throw errors.beforeSavingModelYouMustDefineACollectionToSaveTo();
         }
         if(schema === undefined && this.isMeteorModel === undefined){
@@ -406,22 +478,22 @@ MeteorModel = {
 }
 
 
-function saveMeteorModelObject(mmo){
 
-var currentUserId = Meteor.userId();
-  
-//  COLLECTION_NAMES.PlayerCollection.value.allow({
-//  insert: function (userId, doc) {
-//     return true;
-//   }
-// });
-  if(mmo.collectionInfo.collection){
-    mmo.collectionInfo.collection.insert(mmo.data);
-  }else if(mmo.collectionInfo.collectionName){
-    COLLECTION_NAMES.PlayerCollection.value.insert(mmo.data);
-  }else{
-    throw errors.noCollectionAttachedToMeteorModelObject();
-  }
+function validateMeteorModelSchema(mm){
+    for(var prop in mm.schema){
+
+            if(!mm.data.hasOwnProperty(prop)){
+                if(mm.schema[prop].isMandatoryUponSave){
+                    throw errors.missingMandatoryUponSaveField(prop);
+                }
+            }
+            else{
+
+                if(!returnBooleanIfParameterTypesMatch(mm.data[prop],mm.schema[prop].type)){
+                    throw errors.wrongDataType(returnTheType(mm.schema[prop].type),typeof(data[prop]));
+                }
+            }
+        }
 }
 
 
