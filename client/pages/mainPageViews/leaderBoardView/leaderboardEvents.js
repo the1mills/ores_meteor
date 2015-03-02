@@ -24,13 +24,15 @@ PlayersList.update(selectedPlayer, {$inc: {score: -5} });
 var selectedPlayer = Session.get('selectedPlayer');
 console.log('selected player to remove:',selectedPlayer);
 // PlayersList.remove(selectedPlayer);
-    Meteor.call('removePlayerData', selectedPlayer,function(err,data){
-    if (err){
-    console.log(err);
-    }
-  });
+    
+    PlayersList.remove({_id:selectedPlayer});
+//     Meteor.call('removePlayerData', selectedPlayer,function(err,data){
+//     if (err){
+//     console.log(err);
+//     }
+//   });
 }
-  
+
 
 });
 
@@ -41,11 +43,14 @@ event.preventDefault();
 console.log("Form submitted");
 console.log('event type',event.type);
 var playerNameVar = event.target.playerName.value;
-// Meteor.call('insertPlayerData', playerNameVar);
-  Meteor.call('insertPlayerData', playerNameVar, function(err,data){
-    if (err){
-    console.log(err);
-    }
-  });
+  
+  var player = {name:playerNameVar}; 
+PlayersList.insert(player);
+
+//   Meteor.call('insertPlayerData', playerNameVar, function(err,data){
+//     if (err){
+//     console.log(err);
+//     }
+//   });
 }
 });

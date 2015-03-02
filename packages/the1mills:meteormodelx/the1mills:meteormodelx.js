@@ -391,7 +391,7 @@ MeteorModel = {
 
         }
 
-        if(this.collectionInfo === undefined || this.collectionInfo.collections[0] === undefined){
+        if(this.collectionInfo === undefined || this.collectionInfo.collections === undefined || this.collectionInfo.collections[0] === undefined){
             throw errors.beforeSavingModelYouMustDefineACollectionToSaveTo();
         }
       
@@ -406,6 +406,7 @@ MeteorModel = {
         if(this.meteorMethods.save !== undefined){
             console.log('saving with meteor method');
           
+          console.log(callback);
      
              Meteor.call(this.meteorMethods.save,this,function(err,data){
                console.log('in callback of meteor save call method');
@@ -424,14 +425,16 @@ MeteorModel = {
                  }
                }
             
-                 });
+             });
             return;
             
           }else{
            console.log('saving WITHOUT meteor method');
+            console.log(callback);
 //             result = Meteor.wrapAsync(saveMeteorModelObject(this));
         
-          this.collectionInfo.collections[0].save(this.data,{upsert:this.defaultUpsert},function(err,data){
+            if(this.data._id === undefined){
+               this.collectionInfo.collections[0].insert(this.data,function(err,data){
             
             if(callback){
                callback(err,data);
@@ -450,7 +453,28 @@ MeteorModel = {
             
           });
           return;
-        
+            }
+            else{
+               this.collectionInfo.collections[0].update(this.data,{upsert:this.defaultUpsert},function(err,data){
+            
+            if(callback){
+               callback(err,data);
+            }
+            else{
+            if(Meteor.isServer){
+              this.defaultServerSideCallback(err,data);
+            }
+            else if(Meteor.isClient){
+               this.defaultClientSideCallback(err,data);
+            }
+            else{
+              throw 'neither server nor client problem';
+            }
+            }
+            
+          });
+          return;
+            }
         }
     },
 

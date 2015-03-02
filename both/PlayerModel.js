@@ -6,7 +6,7 @@ function getWeatherInBoston(){
 
 PlayerModel = MeteorModel.expand({
 
-
+    defaultUpsert: true,
     defaultData:{
         //this data is the same for all instances of PlayerModels
         name: getWeatherInBoston(true)
@@ -46,11 +46,12 @@ PlayerModel = MeteorModel.expand({
     },
 
     collectionInfo:{
-//         collectionName: new Meteor.collection('names'),
-//         collectionName: COLLECTION_NAMES.PlayerCollection.value(COLLECTION_NAMES.PlayerCollection.name),
-        collectionName: COLLECTION_NAMES.PlayerCollection.value,
-//        meteorMethodName: 'insertPlayerCollectionData'
+      collections:[COLLECTION_NAMES.PlayerCollection.value,{}]
     },
+  
+  meteorMethods: {
+     save: 'savePlayerModel'
+  },
 
     init: function(prototype){
         //add hooks here for when object is created
@@ -65,11 +66,17 @@ PlayerModel = MeteorModel.expand({
     afterSave: function(){
 
     },
+    defaultClientSideCallback: function(err,result){
+    
+    },
+    defaultServerSideCallback: function(err,result){
+     
+    },
     validateClientSide: function(){
         return true;
     },
     validateServerSide: function(){
-        //this function will be passed to the server
+        //this function will be passed to the server, this should only be used to compare with data that only sits on server
         return true;
     }
 });

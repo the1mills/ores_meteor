@@ -22,10 +22,11 @@ matteodem:server-session
 twbs:bootstrap
 matb33:collection-hooks
 email
-appcache
 dburles:collection-helpers
 the1mills:meteormodelx
 meteorhacks:npm
 audit-argument-checks
 npm-container
 cfs:ejson-file
+meteorhacks:kadira-profiler
+msavin:mongol

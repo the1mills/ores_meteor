@@ -3,4 +3,9 @@
   footer stuff goes here
   {{ footerHelperFunction }}
   
+  {{#each devs}}
+   {{>dev}}
+    {{else}}
+    no devs
+    {{/each}}
 </template>

@@ -1,0 +1,13 @@
+{
+  "env": {
+    "NODE_ENV":"DEVELOPMENT",
+    "METEOR_SETTINGS": {
+       
+    },
+    "public":{}
+},
+   "kadira": { 
+  "appId": "j4myCPmtwBG3HPZis", 
+ "appSecret": "8a9764f6-4dbb-46ef-8db8-e80cb8b6355c" 
+ }
+}
