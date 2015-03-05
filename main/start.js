@@ -32,7 +32,7 @@
  if (Meteor.isServer) {
 
     Meteor.startup(function () {
-      console.log('process:',process);
+    ENVIRONMENT_CONSTANT = process.env;
     var GithubAPI = Meteor.npmRequire('github');
     setUpEmailConfigurations();
   // process.env.MONGO_URL = mongodb://127.0.0.1:3001/meteor 

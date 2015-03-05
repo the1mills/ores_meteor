@@ -71,7 +71,19 @@ Meteor.startup(function() {
   //subscriptionHandler.stop();
   //subscriptionHandler.ready();
   
-
+  var player0 = PlayerModel.createAndSave({data:{name:'bobbbbby',value:44}},function(err,result){
+  console.log('player0:','error:',err,'result:',result);
+  console.log(player0,'error:',err,'result:',result);
+});
+  
+  console.log('player0!!!!:',player0);  
+  
+  
+  var player00 = PlayerModel.createAndSave({data:{name:'bobbbbby00',value:7}});
+  
+  console.log('player00!!!!:',player00); 
+  
+  
 var player1 = PlayerModel.create({name:'namey',value:1});
   console.log('player1 CREATED',player1);
 var player2 = PlayerModel.create({name:'barg',value:2});
@@ -83,34 +95,26 @@ var player4 = PlayerModel.create({name:'four',value:4});
 var player5 = PlayerModel.create({name:'five',value:5});
     console.log('player5 CREATED',player5);
 
-  var result1 = player1.save(false,function(err,result){
-    console.log('error:',err,'result:',result);
+  var result1 = player1.save({name:'judah'},function(err,result){
+    console.log('player1:','error:',err,'result:',result);
 });
-   console.log('player1 SAVED',player1,result1);
-  
-  
-var result2 = player2.save(false,function(err,result){
-  console.log('error:',err,'result:',result);
+   
+var result2 = player2.save(function(err,result){
+  console.log('player2:','error:',err,'result:',result);
 });
-   console.log('player2 SAVED',player2,result2);
   
-  
-var result3 = player3.save(false,function(err,result){
-  console.log('error:',err,'result:',result);
+var result3 = player3.save({},function(err,result){
+  console.log('player3:','error:',err,'result:',result);
 });
-   console.log('player3 SAVED',player3,result3);
   
-  
-var result4 = player4.save(false,function(err,result){
-   console.log('error:',err,'result:',result);
+var result4 = player4.save({},function(err,result){
+   console.log('player4:','error:',err,'result:',result);
 });
-   console.log('player4 SAVED',player4,result4);
   
-  
-var result5 = player5.save(false,function(err,result){
-   console.log('error:',err,'result:',result);
+var result5 = player5.save({},function(err,result){
+   console.log('player5:','error:',err,'result:',result);
 });
-   console.log('player5 SAVED',player1);
+   
 
 
 // var player = MeteorModel.create({player:'playerdata'},{collection:COLLECTION_NAMES.PlayerCollection.value});

@@ -8,15 +8,31 @@ Meteor.methods({
 
   savePlayerModel: function(playermodel){
     
-    console.log('in save player model');
+    check(playermodel,Object);
+    console.log('in save player model');     
+    
+    if(playermodel.data._id){
       
-      playermodel.collectionInfo.collections[0].save(playermodel.data,{upsert:playermodel.defaultUpsert},function(err,result){
+        COLLECTION_NAMES.PlayerCollection.value.update(playermodel.data,{upsert:playermodel.defaultUpsert},function(err,result){
         
         console.log('error:',err);
         console.log('result:',result);
         //playermodel.defaultServerSideCallback(err,result);
         
       });
+      
+    }else{
+      
+        COLLECTION_NAMES.PlayerCollection.value.insert(playermodel.data,function(err,result){
+        
+        console.log('error:',err);
+        console.log('result:',result);
+        //playermodel.defaultServerSideCallback(err,result);
+        
+      });
+    }
+      
+  
   } , 
   
 sendLogMessage: function(msg){

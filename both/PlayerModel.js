@@ -6,6 +6,7 @@ function getWeatherInBoston(){
 
 PlayerModel = MeteorModel.expand({
 
+    modelType: 'PlayerModel',
     defaultUpsert: true,
     defaultData:{
         //this data is the same for all instances of PlayerModels
@@ -22,7 +23,6 @@ PlayerModel = MeteorModel.expand({
         }
 
     },
-
 
     schemaAllowExtraneousFields: false,
     schema:{
@@ -50,7 +50,7 @@ PlayerModel = MeteorModel.expand({
     },
   
   meteorMethods: {
-     save: 'savePlayerModel'
+     //save: 'savePlayerModel'
   },
 
     init: function(prototype){

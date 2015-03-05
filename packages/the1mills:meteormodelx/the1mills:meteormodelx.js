@@ -73,6 +73,13 @@
 
 //http://en.wikipedia.org/wiki/Decorator_pattern
 
+
+ var ENVIRONMENT_CONSTANT_METEOR_MODEL;
+
+setMeteorModelEnv = function(env){
+  ENVIRONMENT_CONSTANT_METEOR_MODEL = env;
+}
+
 var warnings = {
   
   mustPassCallBackToSaveFromClientWithMeteorMethod: function(){
@@ -174,6 +181,7 @@ var errors = {
 
 MeteorModel = {
 
+    modelType:'MeteorModel', 
     isMeteorModel: true,
     defaultUpsert: false,
     mmSchema: {
@@ -225,13 +233,7 @@ MeteorModel = {
         //should be able to accept a simpleschema object
         //if user wants to call super, calls super methods by using this.superObj
 
-        /*if(this.expandedOnceAlready == null){
-         this.expandedOnceAlready = true;
-         }
-         else{
-         throw 'can only expand MeteorModelPrototype to a subobject once';
-         return null;
-         }*/
+     
 
         this.prototype = undefined;
         this._proto_ = undefined;
@@ -257,7 +259,7 @@ MeteorModel = {
         }
 
         for(var attrThis in this){
-            if(attrThis == 'isMeteorModel' || attrThis == 'data' || attrThis == 'expand' || attrThis == 'save'){
+            if(attrThis == 'isMeteorModel' || attrThis == 'data' || attrThis == 'expand' || attrThis == 'save' || attrThis == 'modelType'){
                 continue;
             }
             subo[attrThis.replace('mm_','')] = this[attrThis];
@@ -299,7 +301,7 @@ MeteorModel = {
             subo.schema = schema;
         }
 
-        if(subo.schema === undefined && !subo.isMeteorModel){
+        if(subo.schema === undefined){
             throw errors.undefinedSchemaError();
         }
 
@@ -320,7 +322,7 @@ MeteorModel = {
 
             if(!subo.data.hasOwnProperty(propSubo)){
                 if(subo.schema[propSubo].isMandatoryUponCreate){
-                    if(process.env.NODE_ENV !== 'production') {
+                    if(ENVIRONMENT_CONSTANT_LOCAL.NODE_ENV !== 'production') {
                         throw errors.missingMandatoryUponCreateField(propSubo);
                     }
                     else{
@@ -359,7 +361,7 @@ MeteorModel = {
     },
 //     save: function(collectionInfo,validationBoolean,callback){
   
-  save: function(validationBoolean,callback){
+  save: function(opj,callback){
     
         //might be able to do an update or save intelligently
         //should we check the schema with the data in save? I think not
@@ -371,21 +373,34 @@ MeteorModel = {
 //         if(!callback){
 //           warnings.recommendToPassACallbackToSaveMethod();
 //         }
+    
+    
+        if(callback === undefined){
+          if(typeof opj == 'function'){
+            callback = opj;
+            opj = {};
+          }
+        }
+       else{
+      if(typeof callback != 'function'){
+            throw 'second argument should be a callback function only'
+          }
+        }
+    
+       var validationBoolean = opj.validationBoolean;
+       var collectionInfo = opj.collectionInfo;
+       var saveFromClientDirectlyToServer = opj.saveFromClientDirectlyToServer;
 
         if(this.data === undefined){
             throw errors.createDataBeforeSaving();
         }
 
-//         if(collectionInfo !== undefined){
-//             this.collectionInfo = collectionInfo;
-//         }else{
-//           callback = validationBoolean;
-//           validationBoolean = collectionInfo;
-//         }
+        if(collectionInfo !== undefined){
+            this.collectionInfo = collectionInfo;
+        }
       
       check(this.collectionInfo, Object);
 
-        console.log('saving meteor model (perhaps an expansion of, and isMeteorModel is:',this.isMeteorModel);
         if(this.schema === undefined && this.isMeteorModel === undefined){
             throw errors.createSchemaBeforeSaving();
 
@@ -395,23 +410,23 @@ MeteorModel = {
             throw errors.beforeSavingModelYouMustDefineACollectionToSaveTo();
         }
       
-      if(validationBoolean){
-        validateMeteorModelSchema(this);
-      }
-
-        console.log('saving meteor model...',this.data);
+  //    if(validationBoolean){
+        validateMeteorModelSchemaForSave(this);
+  //    }
 
         var result = null;
 
-        if(this.meteorMethods.save !== undefined){
-            console.log('saving with meteor method');
+        if(this.meteorMethods.save !== undefined && Meteor.isClient && saveFromClientDirectlyToServer){
           
-          console.log(callback);
-     
-             Meteor.call(this.meteorMethods.save,this,function(err,data){
-               console.log('in callback of meteor save call method');
+          //http://stackoverflow.com/questions/12569712/meteor-calling-an-asynchronous-function-inside-a-meteor-method-and-returning-th
+             console.log('inserting with Meteor Method');
+          
+          var toSave = {data:this.data,defaultUpsert:this.defaultUpsert};
+             Meteor.call(this.meteorMethods.save,toSave,function(err,data){
+               console.log('about to call callback in meteor method');
                if(callback){
                  callback(err,data);
+                 return;
                }
                else{
                  if(Meteor.isClient){
@@ -424,21 +439,23 @@ MeteorModel = {
                    throw 'neither server nor client problem';
                  }
                }
-            
              });
             return;
             
           }else{
-           console.log('saving WITHOUT meteor method');
-            console.log(callback);
 //             result = Meteor.wrapAsync(saveMeteorModelObject(this));
-        
+         console.log('inserting naively');
             if(this.data._id === undefined){
+              //collection.save does not appear to be available on client
+              console.log('data_id undefined');
                this.collectionInfo.collections[0].insert(this.data,function(err,data){
             
-            if(callback){
+                  console.log('about to calling back?');
+           if(callback){
+              console.log('calling back');
                callback(err,data);
-            }
+              return;
+           }
             else{
             if(Meteor.isServer){
               this.defaultServerSideCallback(err,data);
@@ -455,11 +472,14 @@ MeteorModel = {
           return;
             }
             else{
+               console.log('data_id defined');
                this.collectionInfo.collections[0].update(this.data,{upsert:this.defaultUpsert},function(err,data){
-            
-            if(callback){
+              console.log('about to calling back?');
+              if(callback){
+              console.log('calling back');
                callback(err,data);
-            }
+              return;
+              }
             else{
             if(Meteor.isServer){
               this.defaultServerSideCallback(err,data);
@@ -482,28 +502,41 @@ MeteorModel = {
       check(postId, String);
         console.log('updated');
     },
-    createAndSave: function(data,collectionInfo,schema){
+    createAndSave: function(opj,callback){
+      
+      
+         if(opj === undefined){
+           throw 'need to defined opj (options object)';
+         }
+      
+          if(typeof opj == 'function'){
+            throw 'opj is the options obj which is the first arg, callback function is second arg';
+          }
+        
+     
+         if(callback !== undefined && typeof callback != 'function'){
+            throw 'second argument should be a callback function only'
+          }
+        
+      
+        var data = opj.data;
+        var collectionInfo = opj.collectionInfo;
+        var schema = opj.schema;
 
         if(data === undefined){
             throw errors.createDataBeforeSaving();
         }
-        if(collectionInfo.collections[0] === undefined){
-            throw errors.beforeSavingModelYouMustDefineACollectionToSaveTo();
-        }
-        if(schema === undefined && this.isMeteorModel === undefined){
-            throw errors.undefinedSchemaError();
-        }
 
         var obj = this.create(data,collectionInfo,schema);
         //if obj is not valid return something else and don't call save
-        return obj.save();
-
+        obj.save({},callback);
+        return obj;
     }
 }
 
 
 
-function validateMeteorModelSchema(mm){
+function validateMeteorModelSchemaForSave(mm){
     for(var prop in mm.schema){
 
             if(!mm.data.hasOwnProperty(prop)){
@@ -556,7 +589,7 @@ function returnBooleanIfParameterTypesMatch( val, schemaType ) {
         case Boolean:
             return typeof(val) === 'boolean';
         case null:
-            return typeof(val) === 'null';
+            return typeof(val) === null;
         case undefined:
             return typeof(val) === 'undefined';
         case 'String':
