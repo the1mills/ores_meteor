@@ -33,6 +33,7 @@
 
     Meteor.startup(function () {
     ENVIRONMENT_CONSTANT = process.env;
+    setMeteorModelEnv(ENVIRONMENT_CONSTANT);
     var GithubAPI = Meteor.npmRequire('github');
     setUpEmailConfigurations();
   // process.env.MONGO_URL = mongodb://127.0.0.1:3001/meteor 

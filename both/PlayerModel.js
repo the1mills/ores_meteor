@@ -6,22 +6,16 @@ function getWeatherInBoston(){
 
 PlayerModel = MeteorModel.expand({
 
-    modelType: 'PlayerModel',
+    _modelType: 'PlayerModel',
     defaultUpsert: true,
     defaultData:{
         //this data is the same for all instances of PlayerModels
-        name: getWeatherInBoston(true)
-    },
-
-    defaultSchemaOverride: {
-        //this data
-        dateCreated: {
-            ignore:true
-        },
-        dateUpdated: {
-            ignore:true
-        }
-
+        dateCreated: null,
+        dateUpdated: null,
+        createdBy: null,
+        updatedBy: null,
+        name: getWeatherInBoston(true),
+        defaultD: ['dateCreated','dateUpdated','createdBy','updatedBy'] 
     },
 
     schemaAllowExtraneousFields: false,
@@ -32,7 +26,7 @@ PlayerModel = MeteorModel.expand({
             lengthMin: 1,
             lengthMax: 30,
             isMandatoryUponSave: true,
-            isMandatoryUponCreate: false,
+            isMandatoryUponCreate: true,
             matches: ['regex'],
             doesNotMatch: ['regexs']
         },
@@ -41,12 +35,12 @@ PlayerModel = MeteorModel.expand({
             min: 10,
             max: 40,
             isMandatoryUponSave: true,
-            isMandatoryUponCreate: false
+            isMandatoryUponCreate: true
         }
     },
 
     collectionInfo:{
-      collections:[COLLECTION_NAMES.PlayerCollection.value,{}]
+      collections:[COLLECTION_NAMES.PlayerCollection.value]
     },
   
   meteorMethods: {

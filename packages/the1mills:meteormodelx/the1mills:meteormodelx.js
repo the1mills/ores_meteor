@@ -181,9 +181,13 @@ var errors = {
 
 MeteorModel = {
 
+    allData: null, //prevents having to re-read from DB
     modelType:'MeteorModel', 
     isMeteorModel: true,
     defaultUpsert: false,
+    mmData: {
+
+    },
     mmSchema: {
 
         dateCreated: {
@@ -217,11 +221,7 @@ MeteorModel = {
         return true;
     },
 
-    mmData: {
 
-
-
-    },
 
     read: function(){
 
@@ -322,7 +322,7 @@ MeteorModel = {
 
             if(!subo.data.hasOwnProperty(propSubo)){
                 if(subo.schema[propSubo].isMandatoryUponCreate){
-                    if(ENVIRONMENT_CONSTANT_LOCAL.NODE_ENV !== 'production') {
+                    if(ENVIRONMENT_CONSTANT_METEOR_MODEL.NODE_ENV !== 'production') {
                         throw errors.missingMandatoryUponCreateField(propSubo);
                     }
                     else{
@@ -355,6 +355,7 @@ MeteorModel = {
             }
         }
         //this.data = undefined;
+        subo.data._modelType = this._modelType;
         subo.data = Object.freeze(subo.data); //freeze object data so it can't be altered again before saving
         //return Object.freeze(subo);
         return subo;
@@ -414,7 +415,6 @@ MeteorModel = {
         validateMeteorModelSchemaForSave(this);
   //    }
 
-        var result = null;
 
         if(this.meteorMethods.save !== undefined && Meteor.isClient && saveFromClientDirectlyToServer){
           
@@ -447,7 +447,7 @@ MeteorModel = {
          console.log('inserting naively');
             if(this.data._id === undefined){
               //collection.save does not appear to be available on client
-              console.log('data_id undefined');
+              console.log('data:',this.data);
                this.collectionInfo.collections[0].insert(this.data,function(err,data){
             
                   console.log('about to calling back?');
@@ -472,7 +472,8 @@ MeteorModel = {
           return;
             }
             else{
-               console.log('data_id defined');
+               
+               console.log('data:',this.data);
                this.collectionInfo.collections[0].update(this.data,{upsert:this.defaultUpsert},function(err,data){
               console.log('about to calling back?');
               if(callback){
@@ -531,7 +532,31 @@ MeteorModel = {
         //if obj is not valid return something else and don't call save
         obj.save({},callback);
         return obj;
-    }
+    },
+  
+  find: function(opj){
+    
+    var allModels = [];
+    
+    this.collectionInfo.collections.forEach(function(collection){
+//           var models = collection.find(opj, {sort: {score: -1}, limit: 5});
+     // console.log('err:',err,'collection:',collection)
+      var models = collection.find(opj);
+      console.log(models);
+      models.forEach(function(model) {
+           if(model._modelType == this._modelType){
+             allModels.push(model);
+           }
+  
+      });
+      
+    });
+    
+    this.allData  = allModels;
+    return this.allData;
+ 
+  }
+      
 }
 
 

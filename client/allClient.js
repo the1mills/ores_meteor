@@ -54,13 +54,16 @@ Meteor.startup(function() {
 //   }
 // });
   
-    var subscriptionHandler2 = Meteor.subscribe('PlayersList', {
+    var subscriptionHandler2 = Meteor.subscribe('PlayerCollection', {
   onReady: function () { 
     console.log("onReady And the Itemns actually Arrive", arguments); 
-    PlayersList.find().forEach(function(item){
-    console.log('players collection item:',item);
-  });
+    var models = PlayerModel.find({});  
+    
+  console.log('models:',models);
   
+    models.forEach(function(model){
+      console.log(model);
+    });
   },
   onError: function () { 
     console.log("onError", arguments); 
@@ -70,6 +73,8 @@ Meteor.startup(function() {
   //console.log(subscriptionHandler);
   //subscriptionHandler.stop();
   //subscriptionHandler.ready();
+  
+
   
   var player0 = PlayerModel.createAndSave({data:{name:'bobbbbby',value:44}},function(err,result){
   console.log('player0:','error:',err,'result:',result);
@@ -115,6 +120,8 @@ var result5 = player5.save({},function(err,result){
    console.log('player5:','error:',err,'result:',result);
 });
    
+  
+//var models = PlayerModel.find({});  
 
 
 // var player = MeteorModel.create({player:'playerdata'},{collection:COLLECTION_NAMES.PlayerCollection.value});
