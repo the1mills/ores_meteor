@@ -1,2 +1,4 @@
 *config-no-git.js
-*settings
+settings-dev.json
+settings-prod.json
+
