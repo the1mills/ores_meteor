@@ -44,7 +44,7 @@ PlayerModel = MeteorModel.expand({
     },
   
   meteorMethods: {
-     //save: 'savePlayerModel'
+     save: 'savePlayerModel'
   },
 
     init: function(prototype){

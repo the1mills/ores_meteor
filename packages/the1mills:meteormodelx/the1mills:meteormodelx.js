@@ -100,6 +100,10 @@ var warnings = {
     }
 };
 
+var errorHandler = {
+  //if dev throw error, if prod log error
+}
+
 var errors = {
   notServerOrClient: function(){
     console.trace();
@@ -182,6 +186,7 @@ var errors = {
 MeteorModel = {
 
     allData: null, //prevents having to re-read from DB
+    clientColl: [],  //clientside only array of MM objects
     modelType:'MeteorModel', 
     isMeteorModel: true,
     defaultUpsert: false,
@@ -235,10 +240,10 @@ MeteorModel = {
 
      
 
-        this.prototype = undefined;
-        this._proto_ = undefined;
-        subo.prototype = undefined; // just to be damn sure
-        subo._proto_ = undefined;
+//         this.prototype = undefined;
+//         this._proto_ = undefined;
+//         subo.prototype = undefined; // just to be damn sure
+//         subo._proto_ = undefined;
 
         if(schema !== undefined) {
             subo.schema = schema;
@@ -268,7 +273,7 @@ MeteorModel = {
         subo.data = undefined;
         return subo;
     },
-    create: function(data, collectionInfo, schema){
+    create: function(opj){
       
        //console.log('create caller:', this.create.caller);
 
@@ -278,6 +283,10 @@ MeteorModel = {
             //throw errors.mustExpandMeteorModel();
             console.log(warnings.shouldExpandMeteorModelAndAddSchema());
         }
+      
+        var data = opj.data;
+        var collectionInfo = opj.collectionInfo;
+        var schema = opj.schema;
 
         var subo = {};
 
@@ -309,33 +318,12 @@ MeteorModel = {
             throw errors.undefinedDataError();
         }
 
-
-        if(subo.schemaAllowExtraneousFields === false){
-            for(var prop in data){
-                if(!subo.schema.hasOwnProperty(prop)){
-                    throw errors.extraneousFieldInData(prop);
-                }
-            }
-        }
-
-        for(var propSubo in subo.schema){
-
-            if(!subo.data.hasOwnProperty(propSubo)){
-                if(subo.schema[propSubo].isMandatoryUponCreate){
-                    if(ENVIRONMENT_CONSTANT_METEOR_MODEL.NODE_ENV !== 'production') {
-                        throw errors.missingMandatoryUponCreateField(propSubo);
-                    }
-                    else{
-                        console.log(errors.missingMandatoryUponCreateField(propSubo));
-                    }
-                }
-            }
-            else{
-
-                if(!returnBooleanIfParameterTypesMatch(data[propSubo],subo.schema[propSubo].type)){
-                    throw errors.wrongDataType(returnTheType(subo.schema[propSubo].type),typeof(data[propSubo]));
-                }
-            }
+        var validationMsg = validateMeteorModelSchemaForCreate(subo);
+        if(validationMsg){
+          return {
+            error:true,
+            validationMsg:validationMsg
+          }
         }
 
         if(typeof(subo.validate) == 'function' && !subo.validate()){
@@ -364,16 +352,17 @@ MeteorModel = {
   
   save: function(opj,callback){
     
-        //might be able to do an update or save intelligently
-        //should we check the schema with the data in save? I think not
-       // obj.save() should save to meteor client collections
-       //wrapAsync doesn't do anything on the client
+       
+       //wrapAsync doesn't do anything on the client (because no fibers on client...right?)
       
       //console.log('save caller:', this.save.caller);
       
 //         if(!callback){
 //           warnings.recommendToPassACallbackToSaveMethod();
 //         }
+    
+    
+        var self = this;
     
     
         if(callback === undefined){
@@ -384,45 +373,46 @@ MeteorModel = {
         }
        else{
       if(typeof callback != 'function'){
-            throw 'second argument should be a callback function only'
+            throw 'only two arguments accepted and second argument should be a callback function only'
           }
         }
     
        var validationBoolean = opj.validationBoolean;
        var collectionInfo = opj.collectionInfo;
        var saveFromClientDirectlyToServer = opj.saveFromClientDirectlyToServer;
+       var validate = opj.validate;
 
-        if(this.data === undefined){
+        if(self.data === undefined){
             throw errors.createDataBeforeSaving();
         }
 
         if(collectionInfo !== undefined){
-            this.collectionInfo = collectionInfo;
+            self.collectionInfo = collectionInfo;
         }
       
-      check(this.collectionInfo, Object);
+      check(self.collectionInfo, Object);
 
-        if(this.schema === undefined && this.isMeteorModel === undefined){
+        if(self.schema === undefined && self.isMeteorModel === undefined){
             throw errors.createSchemaBeforeSaving();
 
         }
 
-        if(this.collectionInfo === undefined || this.collectionInfo.collections === undefined || this.collectionInfo.collections[0] === undefined){
+        if(self.collectionInfo === undefined || self.collectionInfo.collections === undefined || self.collectionInfo.collections[0] === undefined){
             throw errors.beforeSavingModelYouMustDefineACollectionToSaveTo();
         }
       
-  //    if(validationBoolean){
-        validateMeteorModelSchemaForSave(this);
-  //    }
+      if(validate){
+        validateMeteorModelSchemaForSave(self);
+      }
 
 
-        if(this.meteorMethods.save !== undefined && Meteor.isClient && saveFromClientDirectlyToServer){
+        if(self.meteorMethods.save !== undefined && Meteor.isClient && saveFromClientDirectlyToServer){
           
           //http://stackoverflow.com/questions/12569712/meteor-calling-an-asynchronous-function-inside-a-meteor-method-and-returning-th
              console.log('inserting with Meteor Method');
           
-          var toSave = {data:this.data,defaultUpsert:this.defaultUpsert};
-             Meteor.call(this.meteorMethods.save,toSave,function(err,data){
+          var toSave = {data:self.data,defaultUpsert:self.defaultUpsert};
+             Meteor.call(self.meteorMethods.save,toSave,function(err,data){
                console.log('about to call callback in meteor method');
                if(callback){
                  callback(err,data);
@@ -430,10 +420,10 @@ MeteorModel = {
                }
                else{
                  if(Meteor.isClient){
-                  this.defaultClientSideCallback(err,data);
+                  self.defaultClientSideCallback(err,data);
                  }
                  else if(Meteor.isServer){
-                   this.defaultServerSideCallback(err,data);
+                   self.defaultServerSideCallback(err,data);
                  }
                  else{
                    throw 'neither server nor client problem';
@@ -444,24 +434,20 @@ MeteorModel = {
             
           }else{
 //             result = Meteor.wrapAsync(saveMeteorModelObject(this));
-         console.log('inserting naively');
-            if(this.data._id === undefined){
+            if(self.data._id === undefined){
               //collection.save does not appear to be available on client
-              console.log('data:',this.data);
-               this.collectionInfo.collections[0].insert(this.data,function(err,data){
+               self.collectionInfo.collections[0].insert(self.data,function(err,data){
             
-                  console.log('about to calling back?');
            if(callback){
-              console.log('calling back');
                callback(err,data);
               return;
            }
             else{
             if(Meteor.isServer){
-              this.defaultServerSideCallback(err,data);
+              self.defaultServerSideCallback(err,data);
             }
             else if(Meteor.isClient){
-               this.defaultClientSideCallback(err,data);
+               self.defaultClientSideCallback(err,data);
             }
             else{
               throw 'neither server nor client problem';
@@ -472,21 +458,17 @@ MeteorModel = {
           return;
             }
             else{
-               
-               console.log('data:',this.data);
-               this.collectionInfo.collections[0].update(this.data,{upsert:this.defaultUpsert},function(err,data){
-              console.log('about to calling back?');
+               self.collectionInfo.collections[0].update(self.data,{upsert:self.defaultUpsert},function(err,data){
               if(callback){
-              console.log('calling back');
                callback(err,data);
               return;
               }
             else{
             if(Meteor.isServer){
-              this.defaultServerSideCallback(err,data);
+              self.defaultServerSideCallback(err,data);
             }
             else if(Meteor.isClient){
-               this.defaultClientSideCallback(err,data);
+               self.defaultClientSideCallback(err,data);
             }
             else{
               throw 'neither server nor client problem';
@@ -503,6 +485,9 @@ MeteorModel = {
       check(postId, String);
         console.log('updated');
     },
+    crnsv: function(opj,callback){
+      return createAndSave(opj,callback);
+    },
     createAndSave: function(opj,callback){
       
       
@@ -518,7 +503,6 @@ MeteorModel = {
          if(callback !== undefined && typeof callback != 'function'){
             throw 'second argument should be a callback function only'
           }
-        
       
         var data = opj.data;
         var collectionInfo = opj.collectionInfo;
@@ -528,9 +512,11 @@ MeteorModel = {
             throw errors.createDataBeforeSaving();
         }
 
-        var obj = this.create(data,collectionInfo,schema);
-        //if obj is not valid return something else and don't call save
-        obj.save({},callback);
+        var obj = this.create(opj);
+      
+        if(obj !== undefined && obj !== null){ 
+        obj.save({validate:false},callback);
+        }
         return obj;
     },
   
@@ -538,13 +524,15 @@ MeteorModel = {
     
     var allModels = [];
     
-    this.collectionInfo.collections.forEach(function(collection){
+    var self = this;
+    
+    self.collectionInfo.collections.forEach(function(collection){
 //           var models = collection.find(opj, {sort: {score: -1}, limit: 5});
      // console.log('err:',err,'collection:',collection)
       var models = collection.find(opj);
       console.log(models);
       models.forEach(function(model) {
-           if(model._modelType == this._modelType){
+           if(model._modelType == self._modelType){
              allModels.push(model);
            }
   
@@ -552,11 +540,42 @@ MeteorModel = {
       
     });
     
-    this.allData  = allModels;
-    return this.allData;
+    self.allData  = allModels;
+    return self.allData;
  
   }
       
+}
+
+
+function validateMeteorModelSchemaForCreate(subo){
+  if(subo.schemaAllowExtraneousFields === false){
+            for(var prop in subo.data){
+                if(!subo.schema.hasOwnProperty(prop)){
+                    throw errors.extraneousFieldInData(prop);
+                }
+            }
+        }
+
+        for(var propSubo in subo.schema){
+
+            if(!subo.data.hasOwnProperty(propSubo)){
+                if(subo.schema[propSubo].isMandatoryUponCreate){
+                    if(ENVIRONMENT_CONSTANT_METEOR_MODEL.NODE_ENV !== 'production') {
+                        throw errors.missingMandatoryUponCreateField(propSubo);
+                    }
+                    else{
+                        console.log(errors.missingMandatoryUponCreateField(propSubo));
+                    }
+                }
+            }
+            else{
+
+                if(!returnBooleanIfParameterTypesMatch(subo.data[propSubo],subo.schema[propSubo].type)){
+                    throw errors.wrongDataType(returnTheType(subo.schema[propSubo].type),typeof(subo.data[propSubo]));
+                }
+            }
+        }
 }
 
 

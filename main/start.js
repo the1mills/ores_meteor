@@ -48,7 +48,13 @@
 /*
 
 questions:
+if you defined something on both client and server, like PlayerModel, and have var x = [] in PlayerModel, are there two separate instances of the same code?
+when is Session variable on client defined and redefined? after page reload only?
+is there a way to add to front-end collections and not sync with back-end?
 simple:reactive-method
+how to create mobile version of m.oresoftware.com?
+how would you develop the front-end in a separate application from the back-end?
+In meteor apps, is there a way to only send the javascript that pertains to a particular page-load, and not all the Meteor client code?
 emerge:graviton
 should expose collection names to front-end or just subscriptions?
 PlayersList.allow on the client
