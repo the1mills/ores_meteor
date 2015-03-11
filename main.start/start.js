@@ -28,17 +28,44 @@
 //https://meteorhacks.com/fibers-eventloop-and-meteor.html
 //meteor --settings settings.json
 
+var sendEmail = function(){
+     var opts= {
+      to: 'alex@oresoftware.com',
+      from: 'oresoftware@oresoftware.com',
+      subject: 'starting up app',
+      text: 'startup message goes here'
+    }
+   Meteor.call('sendEmail', opts, function(err,result){
+     console.log(err);
+     console.log(result);
+   });
+};
+
+if (process.env.NODE_ENV === 'production') { 
+  process.on('uncaughtException', function (err) {
+    console.error(err.stack);
+   var opts= {
+      to: 'alex@oresoftware.com',
+      from: 'oresoftware-prod@oresoftware.com',
+      subject: '! !!! ! Production ERROR  !!! !!',
+      text: 'error message goes here'
+    }
+   Meteor.call('sendEmail', opts);
+  });
+}
  
  if (Meteor.isServer) {
 
     Meteor.startup(function () {
+   
     ENVIRONMENT_CONSTANT = process.env;
     setMeteorModelEnv(ENVIRONMENT_CONSTANT);
     var GithubAPI = Meteor.npmRequire('github');
     setUpEmailConfigurations();
+       sendEmail();  
   // process.env.MONGO_URL = mongodb://127.0.0.1:3001/meteor 
 //   process.env.MONGO_URL = 'smtp://postmaster%40meteorize.mailgun.org:YOURPASSWORD@smtp.mailgun.org:587';
-    console.log('process.env.MONGO_URL',process.env.MONGO_URL);
+      console.log('process.env:',process.env);
     //process.env.MONGO_URL = 'mongodb://the1mills:pqiw269F@ds063870.mongolab.com:63870/oresoftware';
   
     console.log('starting up...in startup.js');

@@ -2,6 +2,37 @@
 
 Meteor.methods({
   
+   sendEmailOld: function (to, from, subject, text) {
+    check([to, from, subject, text], [String]);
+
+    // Let other method calls from the same client start running,
+    // without waiting for the email sending to complete.
+    this.unblock();
+
+    Email.send({
+      to: to,
+      from: from,
+      subject: subject,
+      text: text
+    });
+  },
+  
+   sendEmail: function (opts) {
+     check(opts,Object);
+    check([opts.to, opts.from, opts.subject, opts.text], [String]);
+
+    // Let other method calls from the same client start running,
+    // without waiting for the email sending to complete.
+    //this.unblock();
+
+    Email.send({
+      to: opts.to,
+      from: opts.from,
+      subject: opts.subject,
+      text: opts.text
+    });
+  },
+  
   saveModel: function(model){
     
   },

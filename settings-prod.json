@@ -1,0 +1,16 @@
+{
+  "env": {
+    "NODE_ENV":"PRODUCTION",
+    "METEOR_SETTINGS": {
+       "MONGO_URL":"mongodb://the1mills:pqiw269F@ds063870.mongolab.com:63870/oresoftware"
+    },
+    "MONGO_URL":"mongodb://the1mills:pqiw269F@ds063870.mongolab.com:63870/oresoftware",
+    "public":{}
+},
+  "NODE_ENV":"PRODUCTION",
+  "MONGO_URL":"mongodb://the1mills:pqiw269F@ds063870.mongolab.com:63870/oresoftware",
+  "kadira": { 
+  "appId": "ATEHjQ3xLSCw9DYpr", 
+ "appSecret": "a6f00003-983d-4502-84c4-a7d11646b9e0" 
+ }
+}
