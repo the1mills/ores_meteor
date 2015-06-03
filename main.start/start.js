@@ -28,11 +28,13 @@
 //https://meteorhacks.com/fibers-eventloop-and-meteor.html
 //meteor --settings settings.json
 
-var sendEmail = function(){
+ENVIRONMENT_CONSTANT = {};
+
+var sendEmailOnStartup = function(){
      var opts= {
       to: 'alex@oresoftware.com',
       from: 'oresoftware@oresoftware.com',
-      subject: 'starting up app',
+      subject: 'starting up ORESoftware.com app - env is ' + ENVIRONMENT_CONSTANT.NODE_ENV,
       text: 'startup message goes here'
     }
    Meteor.call('sendEmail', opts, function(err,result){
@@ -62,7 +64,7 @@ if (process.env.NODE_ENV === 'production') {
     setMeteorModelEnv(ENVIRONMENT_CONSTANT);
     var GithubAPI = Meteor.npmRequire('github');
     setUpEmailConfigurations();
-       sendEmail();  
+       sendEmailOnStartup();  
   // process.env.MONGO_URL = mongodb://127.0.0.1:3001/meteor 
 //   process.env.MONGO_URL = 'smtp://postmaster%40meteorize.mailgun.org:YOURPASSWORD@smtp.mailgun.org:587';
       console.log('process.env:',process.env);
